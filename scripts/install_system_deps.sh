@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # install_system_deps.sh — install the OS-level packages required to build and
-# run the face-verification harness and the CryptoFace reference submission.
+# run the face-verification harness and the submission.
 #
 # Python dependencies are handled separately via requirements.txt.
 #
@@ -17,8 +17,6 @@ ${SUDO} apt-get update
 ${SUDO} apt-get install -y \
     build-essential \
     python3-dev \
-    golang-go \
-    libgraphviz-dev \
     libgl1-mesa-glx \
     libglib2.0-0 \
     libsm6 \

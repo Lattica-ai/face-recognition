@@ -1,4 +1,4 @@
-# Harness + CryptoFace reference submission Python dependencies.
+# Harness + submission Python dependencies.
 # System (apt) packages: see scripts/install_system_deps.sh
 #
 # Install with: uv pip install --python .venv/bin/python -r requirements.txt
@@ -15,5 +15,5 @@ pillow==12.3.0
 onnxruntime==1.24.3
 huggingface_hub>=0.24
 
-# Orion FHE framework (required by the CryptoFace reference submission)
-orion @ git+https://github.com/vboddeti/orion.git@7e27281354f9ac5ffd0cf4330fee2bbea75a9dc7
+# Lattica's query client (the submission's key generation, encryption, remote computation and decryption)
+lattica-query>2.19.0

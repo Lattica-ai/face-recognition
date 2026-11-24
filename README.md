@@ -4,11 +4,11 @@ This repository contains the harness for the face-verification workload of the
 FHE benchmarking suite from
 [HomomorphicEncryption.org](https://homomorphicencryption.org/).
 
-The repository includes a
+This branch carries Lattica's submission under `submission/`:
 [CryptoFace](https://openaccess.thecvf.com/content/CVPR2025/html/Ao_CryptoFace_End-to-End_Encrypted_Face_Recognition_CVPR_2025_paper.html)
-reference submission under `submission/`, implemented with
-[Orion](https://github.com/vboddeti/orion) and
-[RNS-CKKS](https://eprint.iacr.org/2018/931).
+under [RNS-CKKS](https://eprint.iacr.org/2018/931), evaluated by a remote
+Lattica worker. It serves the single-pair instance (size `0`) only; see
+[`submission/readme.md`](submission/readme.md).
 
 Submitters clone this repository and replace the contents of `submission/` with
 their own implementation. This README defines the normative workload interface.
@@ -20,8 +20,6 @@ their own implementation. This README defines the normative workload interface.
 `scripts/install_system_deps.sh` installs the OS-level packages via `apt`:
 
 - `build-essential`, `python3-dev` — compilers/headers for building native extensions
-- `golang-go` — required by Orion's build
-- `libgraphviz-dev` — pipeline graph visualization
 - `libgl1-mesa-glx`, `libglib2.0-0`, `libsm6`, `libxext6`, `libxrender-dev` — OpenCV/OpenGL runtime libs (InsightFace)
 
 ```console
@@ -34,8 +32,7 @@ The setup uses Python 3.12 and [`uv`](https://docs.astral.sh/uv/). Install
 [`uv`](https://docs.astral.sh/uv/getting-started/installation/) and ensure it
 is on `PATH` before running the installation script.
 
-`requirements.txt` contains the harness and reference-submission dependencies.
-Orion is pinned to the revision used by the validated CryptoFace environment.
+`requirements.txt` contains the harness and submission dependencies.
 
 ```console
 bash scripts/install_python_deps.sh
@@ -47,19 +44,19 @@ below assume that environment is active.
 
 ### Dataset and model (Hugging Face)
 
-The benchmark dataset and the reference model checkpoint are hosted on Hugging
-Face and downloaded automatically on the first run (cached under
-`~/.cache/huggingface`). No manual step is required — `huggingface_hub` is
-installed with the Python dependencies above.
+The benchmark dataset is hosted on Hugging Face and downloaded automatically on
+the first run (cached under `~/.cache/huggingface`). No manual step is required
+— `huggingface_hub` is installed with the Python dependencies above. The model
+checkpoint is not downloaded here: the deployed model was built from it.
 
 | Artifact | Hugging Face repo | Pulled by |
 |---|---|---|
 | `face_dataset.npy` + `face_dataset_labels.txt` | [`halmsu/celeba-1024-pairs`](https://huggingface.co/datasets/halmsu/celeba-1024-pairs) (dataset) | harness `generate_dataset.py` -> indexed `datasets/face_dataset.h5` |
-| `backbone-64x64.ckpt` | [`halmsu/cryptoface-v1`](https://huggingface.co/halmsu/cryptoface-v1) (model) | reference submission `common.load_submission_config` |
+| `backbone-64x64.ckpt` | [`halmsu/cryptoface-v1`](https://huggingface.co/halmsu/cryptoface-v1) (model) | not pulled: the weights of the model deployed on the worker |
 
 The dataset contains 1,024 screened CelebA pairs: 512 genuine and 512 impostor
 pairs. It preserves the original variable-size JPEG images. The input generator
-decodes them without resizing, and the reference submission performs face
+decodes them without resizing, and the submission performs face
 detection, landmark alignment, cropping, and only then resizes the aligned crop
 for CryptoFace. The four benchmark variants sample 1, 128, 256, or all 1,024
 pairs from this master set.
@@ -71,10 +68,9 @@ provided directly in this indexed format; the harness then reads only selected
 labels and the current image chunk instead of loading the source dataset.
 
 **Offline / local override.** To run without network access, place either an
-indexed `face_dataset.h5` or the two legacy dataset files in `datasets/`, and
-place the checkpoint at the `ckpt_path` in `submission/config.yml` (default
-`submission/checkpoints/backbone-64x64.ckpt`). Existing local files are used
-in preference to the download.
+indexed `face_dataset.h5` or the two legacy dataset files in `datasets/`.
+Existing local files are used in preference to the download. The submission
+itself needs the network: it queries the remote worker.
 
 ## Running the benchmark
 
@@ -211,7 +207,7 @@ batched variant, it evaluates the encrypted model and the included ArcFace
 baseline on the same sampled pairs, then sweeps every distinct similarity
 threshold over all pairs. It reports:
 
-Both the reference submission and ArcFace use InsightFace's Buffalo-L detector
+Both the submission and ArcFace use InsightFace's Buffalo-L detector
 with an explicit single 640x640 detector pass. The submission aligns that
 detector's landmarks into its 64x64 CryptoFace input, while ArcFace performs its
 own aligned recognition crop. Fixing the detector scale avoids
@@ -258,19 +254,17 @@ python3 harness/verify_result.py <labels-file> <scores-file> [tag]
 │   ├── face_dataset_labels.txt # Downloaded ground-truth labels
 │   ├── face_dataset.h5         # Generated indexed random-access store
 │   └── face_dataset_provenance.json # Generated harness-owned dataset hashes
-├── submission/                 # Reference submission (CryptoFace)
-│   ├── config.yml
-│   ├── common.py
+├── submission/                 # Lattica's submission (CryptoFace on a remote worker)
+│   ├── readme.md
+│   ├── submission_utils.py     # Files, access token, client, server timing
+│   ├── face_preprocessing.py   # Face alignment and the model's input layout
 │   ├── client_key_generation.py
 │   ├── server_preprocess_model.py
 │   ├── client_preprocess_input.py
 │   ├── client_encode_encrypt_input.py
 │   ├── server_encrypted_compute.py
 │   ├── client_decrypt_decode.py
-│   ├── client_postprocess.py
-│   ├── models/
-│   ├── utils/
-│   └── orion_configs/
+│   └── client_postprocess.py
 ├── scripts/
 │   ├── install_system_deps.sh
 │   └── install_python_deps.sh
