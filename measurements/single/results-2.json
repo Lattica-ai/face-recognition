@@ -1,63 +1,34 @@
 {
   "Timing": {
-    "Test dataset generation": "1.852s",
-    "Key Generation": "288.6714s",
-    "Encrypted model preprocessing": "1449.6558s",
-    "Input generation": "0.2582s",
-    "Input preprocessing": "4.6923s",
-    "Input encryption": "85.53s",
-    "Encrypted computation": "747.6103s",
-    "Result decryption": "32.2763s",
-    "Result postprocessing": "0.01s",
-    "Harness: Run quality check": "0.0007s",
-    "Offline setup total": "1740.1791s",
-    "Online evaluation total": "870.3779s",
-    "Total": "2610.557s"
+    "Test dataset generation": "0.379s",
+    "Key Generation": "64.7909s",
+    "Encrypted model preprocessing": "0.0071s",
+    "Input generation": "0.1684s",
+    "Input preprocessing": "2.4839s",
+    "Input encryption": "1.2009s",
+    "Encrypted computation": "1.1374s",
+    "Result decryption": "1.116s",
+    "Result postprocessing": "0.0073s",
+    "Harness: Run quality check": "0.0006s",
+    "Offline setup total": "65.177s",
+    "Online evaluation total": "6.1144s",
+    "Total": "71.2914s"
   },
   "Bandwidth": {
-    "Public and evaluation keys": "28.8G",
-    "Packed model weights": "114.1G",
-    "Encrypted input": "128.1M",
+    "Public and evaluation keys": "4.4G",
+    "Packed model weights": "0B",
+    "Encrypted input": "12.0M",
     "Encrypted results": "1.0M"
   },
   "Quality": {
     "Encrypted model quality": {
-      "score": -0.004919,
+      "score": -0.016691,
       "label": 0
     }
   },
   "Server Reported": {
-    "Encrypted computation": "111.1792s",
-    "Total": "744.1747s",
-    "Server process lifetime": "744.9686s",
-    "Pipeline load and key setup": "632.9955s",
-    "Packed model I/O": "353.295s",
-    "Runtime circuit compilation": "271.58s",
-    "Ciphertext input I/O worker-seconds": "0.343s",
-    "Ciphertext transport worker-seconds": "0.2371s",
-    "Encrypted inference worker-seconds": "820.9599s",
-    "Backbone forward worker-seconds": "819.5007s",
-    "Normalization worker-seconds": "1.2555s",
-    "Inner product worker-seconds": "0.2037s",
-    "Mean encrypted wall time per pair": "111.1792s",
-    "Timing semantics": {
-      "wall_time": [
-        "Encrypted computation",
-        "Total",
-        "Server process lifetime",
-        "Pipeline load and key setup",
-        "Packed model I/O",
-        "Runtime circuit compilation",
-        "Mean encrypted wall time per pair"
-      ],
-      "summed_worker_time": [
-        "Ciphertext input I/O worker-seconds",
-        "Ciphertext transport worker-seconds",
-        "Encrypted inference worker-seconds",
-        "Backbone forward worker-seconds",
-        "Normalization worker-seconds",
-        "Inner product worker-seconds"
-      ]
-    }
+    "Encrypted computation": "0.1542s",
+    "Backend overhead": "0.0308s",
+    "Upload time": "0.072s"
   }
 }
